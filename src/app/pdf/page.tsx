@@ -40,7 +40,7 @@ export default async function PdfPage() {
         {/* Заголовок */}
         <div className="text-center mb-10 pb-6 border-b-2 border-[#1a1a1a]">
           <h1 className="text-2xl font-bold text-[#1a1a1a] mb-1">Партнёрский каталог</h1>
-          <p className="text-base text-muted">Фестиваль «Хочу дом» · 2025</p>
+          <p className="text-base text-muted">Фестиваль «Хочу дом» · 2026</p>
         </div>
 
         {/* Таблицы по категориям */}
@@ -52,38 +52,54 @@ export default async function PdfPage() {
 
           return (
             <div key={cat.id} className="mb-8 print:break-inside-avoid">
-              <h2 className="text-base font-bold text-[#1a1a1a] mb-2 pb-1 border-b border-[#1a1a1a]">
-                {cat.order}. {cat.name}
-              </h2>
-              <table className="w-full text-xs">
+              {/* Заголовок категории */}
+              <div style={{ backgroundColor: "#2d6a4f" }} className="rounded-lg px-4 py-2.5 mb-0 flex items-center gap-3">
+                <span style={{ color: "#b3e6c9" }} className="text-xs font-bold tabular-nums opacity-70">
+                  {String(cat.order).padStart(2, "0")}
+                </span>
+                <h2 className="text-sm font-bold text-white">{cat.name}</h2>
+                <span style={{ color: "#b3e6c9" }} className="text-xs ml-auto opacity-70">
+                  {catContractors.length} {catContractors.length === 1 ? "партнёр" : catContractors.length < 5 ? "партнёра" : "партнёров"}
+                </span>
+              </div>
+
+              <table className="w-full text-xs border border-t-0 border-[#e5e9e6] rounded-b-lg overflow-hidden">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-1.5 pr-3 text-muted font-medium w-1/4">Компания</th>
-                    <th className="text-left py-1.5 pr-3 text-muted font-medium w-1/3">Услуги</th>
-                    <th className="text-left py-1.5 pr-3 text-muted font-medium w-1/5">Телефон</th>
-                    <th className="text-left py-1.5 text-muted font-medium">Контакты</th>
+                  <tr style={{ backgroundColor: "#f0faf4" }} className="border-b border-[#d8f3e3]">
+                    <th className="text-left py-1.5 px-3 text-[#2d6a4f] font-semibold w-1/4">Компания</th>
+                    <th className="text-left py-1.5 pr-3 text-[#2d6a4f] font-semibold w-1/3">Услуги</th>
+                    <th className="text-left py-1.5 pr-3 text-[#2d6a4f] font-semibold">Контакты</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {catContractors.map((c) => {
-                    const subs = c.subcategories
-                      .filter(s => s.subcategory.category.name === cat.name)
-                      .map(s => s.subcategory.name)
-                      .join(", ");
-                    return (
-                      <tr key={c.id} className="border-b border-border/50">
-                        <td className="py-1.5 pr-3 font-medium text-[#1a1a1a]">
-                          {c.name}
-                          {c.isFestivalPartner && <span className="ml-1 text-amber-600">★</span>}
-                        </td>
-                        <td className="py-1.5 pr-3 text-muted">{subs}</td>
-                        <td className="py-1.5 pr-3 text-muted">{c.phone || "—"}</td>
-                        <td className="py-1.5 text-muted text-[10px]">
-                          {[c.website, c.instagram, c.telegram].filter(Boolean).join(" · ") || "—"}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {catContractors.map((c, idx) => (
+                    <tr
+                      key={c.id}
+                      style={{ backgroundColor: idx % 2 === 1 ? "#f8faf7" : "#ffffff" }}
+                      className="border-b border-[#e5e9e6] last:border-0"
+                    >
+                      <td className="py-2 px-3 font-semibold text-[#1a1a1a] align-top">
+                        {c.name}
+                        {c.isFestivalPartner && (
+                          <span className="ml-1.5 text-[10px] font-bold text-amber-600">★</span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-3 text-[#6b7280] align-top">
+                        {c.subcategories
+                          .filter(s => s.subcategory.category.name === cat.name)
+                          .map(s => s.subcategory.name)
+                          .join(", ")}
+                      </td>
+                      <td className="py-2 pr-3 text-[10px] text-[#6b7280] leading-[1.6] align-top">
+                        {c.phone && <div className="font-medium text-[#1a1a1a]">{c.phone}</div>}
+                        {c.address && <div>{c.address}</div>}
+                        {[c.website, c.instagram, c.vk, c.telegram].filter(Boolean).map((link, i) => (
+                          <div key={i}>{link}</div>
+                        ))}
+                        {!c.phone && !c.address && !c.website && !c.instagram && !c.vk && !c.telegram && "—"}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
