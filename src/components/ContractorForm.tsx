@@ -287,7 +287,7 @@ export default function ContractorForm({
         <div className="space-y-2">
           {categories.map((cat) => {
             const isOpen = !!openCats[cat.id];
-            const selectedCount = cat.subcategories.filter((s) => form.subcategoryIds.includes(s.id)).length;
+            const selectedCount = cat.subcategories.filter((s) => form.subcategoryIds.includes(String(s.id))).length;
             return (
               <div key={cat.id} className="border border-border rounded-xl overflow-hidden">
                 <button
@@ -306,12 +306,12 @@ export default function ContractorForm({
                 {isOpen && (
                   <div className="px-4 py-3 flex flex-wrap gap-2 border-t border-border">
                     {cat.subcategories.map((sub) => {
-                      const selected = form.subcategoryIds.includes(sub.id);
+                      const selected = form.subcategoryIds.includes(String(sub.id));
                       return (
                         <button
                           key={sub.id}
                           type="button"
-                          onClick={() => toggleSub(sub.id)}
+                          onClick={() => toggleSub(String(sub.id))}
                           className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                             selected
                               ? "bg-brand text-white border-brand"

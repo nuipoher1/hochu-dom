@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Mic } from "lucide-react";
 import DeleteContractorButton from "@/components/DeleteContractorButton";
 
 export default async function ContractorsPage({ searchParams }: { searchParams: { q?: string } }) {
@@ -64,16 +64,22 @@ export default async function ContractorsPage({ searchParams }: { searchParams: 
                 <tr key={c.id} className="hover:bg-surface/50 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-brand text-xs font-semibold">{c.name.slice(0, 2).toUpperCase()}</span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
-                        <div className="flex gap-1 mt-0.5">
-                          {c.isFestivalPartner && <span className="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Фестиваль</span>}
-                          {c.isSpeaker && <span className="text-[10px] text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">Спикер</span>}
+                      {c.isSpeaker ? (
+                        <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center flex-shrink-0">
+                          <Mic size={14} className="text-purple-600" />
                         </div>
-                      </div>
+                      ) : c.isFestivalPartner ? (
+                        <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
+                          <span className="text-amber-500 text-sm leading-none">★</span>
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center flex-shrink-0">
+                          <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
+                            <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="#9ca3af" />
+                          </svg>
+                        </div>
+                      )}
+                      <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
                     </div>
                   </td>
                   <td className="px-5 py-3 hidden md:table-cell">
