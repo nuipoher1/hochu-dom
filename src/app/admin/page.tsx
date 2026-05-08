@@ -1,6 +1,8 @@
+export const dynamic = "force-dynamic";
+
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Users, FolderTree, Star, Mic, Plus } from "lucide-react";
+import { Users, FolderTree, Star, Mic, Plus, Download } from "lucide-react";
 
 export default async function AdminDashboard() {
   const [contractors, categories, festivalPartners, speakers] = await Promise.all([
@@ -30,12 +32,21 @@ export default async function AdminDashboard() {
           <h1 className="text-2xl font-semibold text-[#1a1a1a]">Дашборд</h1>
           <p className="text-sm text-muted mt-0.5">Обзор каталога</p>
         </div>
-        <Link
-          href="/admin/contractors/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-medium rounded-xl hover:bg-brand-dark transition-colors"
-        >
-          <Plus size={16} /> Добавить партнёра
-        </Link>
+        <div className="flex items-center gap-2">
+          <a
+            href="/api/admin/backup"
+            download
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-muted text-sm font-medium rounded-xl border border-border hover:border-brand hover:text-brand transition-colors"
+          >
+            <Download size={16} /> Скачать резервную копию
+          </a>
+          <Link
+            href="/admin/contractors/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-medium rounded-xl hover:bg-brand-dark transition-colors"
+          >
+            <Plus size={16} /> Добавить партнёра
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
