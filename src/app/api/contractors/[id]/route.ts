@@ -39,9 +39,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: "Название обязательно" }, { status: 400 });
   }
 
-  const parsedSubIds: number[] = (subcategoryIds || [])
-    .map((sid: unknown) => parseInt(String(sid)))
-    .filter((n: number) => !isNaN(n));
+  const parsedSubIds: number[] = [
+    ...new Set(
+      (subcategoryIds || [])
+        .map((sid: unknown) => parseInt(String(sid)))
+        .filter((n: number) => !isNaN(n))
+    ),
+  ];
 
   console.log("[PUT contractor] id:", id, "parsedSubIds:", parsedSubIds);
 
@@ -79,6 +83,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       console.log("[PUT contractor] creating subcategory links:", parsedSubIds);
       await prisma.contractorSubcategory.createMany({
         data: parsedSubIds.map((subcategoryId) => ({ contractorId: id, subcategoryId })),
+        skipDuplicates: true,
       });
     }
 
