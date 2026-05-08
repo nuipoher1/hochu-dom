@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import PrintButton from "@/components/PrintButton";
 
 export default async function PdfPage() {
   const categories = await prisma.category.findMany({
@@ -30,12 +31,7 @@ export default async function PdfPage() {
       {/* Шапка — не печатается */}
       <div className="print:hidden bg-surface border-b border-border px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-sm text-muted hover:text-brand">← Назад</Link>
-        <button
-          onClick={() => window.print()}
-          className="px-4 py-2 bg-brand text-white text-sm font-medium rounded-lg hover:bg-brand-dark transition-colors"
-        >
-          Скачать / Печать
-        </button>
+        <PrintButton />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-10 print:px-0 print:py-0">
@@ -97,7 +93,7 @@ export default async function PdfPage() {
         </div>
       </div>
 
-      <style jsx global>{`
+      <style>{`
         @media print {
           @page { margin: 1.5cm; }
           body { font-size: 11px; }
