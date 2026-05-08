@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id              Int           @id @default(autoincrement())
+  name            String
+  slug            String        @unique
+  icon            String?
+  order           Int           @default(0)
+  importantNotes  String?
+  commonMistakes  String?
+  attentionPoints String?
+  tips            Tip[]
+  subcategories   Subcategory[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Tip {
+  id         Int      @id @default(autoincrement())
+  text       String
+  type       String   @default("info")
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  order      Int      @default(0)
+}
+
+model Subcategory {
+  id          Int                     @id @default(autoincrement())
+  name        String
+  slug        String
+  description String?
+  categoryId  Int
+  category    Category                @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  contractors ContractorSubcategory[]
+  order       Int                     @default(0)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@unique([slug, categoryId])
+}
+
+model Contractor {
+  id                Int                     @id @default(autoincrement())
+  name              String
+  description       String?
+  logo              String?
+  geography         String?
+  address           String?
+  phone             String?
+  email             String?
+  website           String?
+  instagram         String?
+  vk                String?
+  telegram          String?
+  whatsapp          String?
+  isFestivalPartner Boolean                 @default(false)
+  isSpeaker         Boolean                 @default(false)
+  speakerTopic      String?
+  speakerLectureUrl String?
+  subcategories     ContractorSubcategory[]
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+}
+
+model ContractorSubcategory {
+  contractorId  Int
+  subcategoryId Int
+  contractor    Contractor  @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+
+  @@id([contractorId, subcategoryId])
+}
