@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Globe, Instagram, MessageCircle } from "lucide-react";
+import { Phone, Globe, Instagram, MessageCircle, Mic } from "lucide-react";
 
 interface Subcategory {
   name: string;
@@ -39,39 +39,57 @@ function formatGeography(val: string): string {
   return val;
 }
 
-export default function ContractorCard({ contractor }: { contractor: Contractor }) {
-  const initials = contractor.name
-    .split(" ")
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+function Avatar({ contractor }: { contractor: Contractor }) {
+  if (contractor.logo) {
+    return (
+      <div className="w-12 h-12 rounded-xl border border-border flex items-center justify-center flex-shrink-0 overflow-hidden bg-white">
+        <img src={contractor.logo} alt={contractor.name} className="w-full h-full object-contain" />
+      </div>
+    );
+  }
 
+  // Спикер — фиолетовый квадрат с микрофоном
+  if (contractor.isSpeaker) {
+    return (
+      <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center flex-shrink-0" title="Спикер фестиваля">
+        <Mic size={20} className="text-purple-600" />
+      </div>
+    );
+  }
+
+  // Участник фестиваля — янтарный квадрат со звездой
+  if (contractor.isFestivalPartner) {
+    return (
+      <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0" title="Участник фестиваля">
+        <span className="text-amber-500 text-xl leading-none">★</span>
+      </div>
+    );
+  }
+
+  // Обычный партнёр — нейтральный серый квадрат с домиком
+  return (
+    <div className="w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center flex-shrink-0">
+      <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
+        <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="#9ca3af" />
+      </svg>
+    </div>
+  );
+}
+
+export default function ContractorCard({ contractor }: { contractor: Contractor }) {
   return (
     <div className="bg-white rounded-2xl border border-border p-5 flex flex-col gap-4 hover:shadow-md transition-shadow">
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-          {contractor.logo ? (
-            <img src={contractor.logo} alt={contractor.name} className="w-full h-full object-contain" />
-          ) : (
-            <span className="text-brand font-semibold text-sm">{initials}</span>
-          )}
-        </div>
+        <Avatar contractor={contractor} />
 
         <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap gap-1.5 mb-1">
-            {contractor.isFestivalPartner && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                Участник фестиваля
-              </span>
-            )}
-            {contractor.isSpeaker && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                Спикер
-              </span>
-            )}
-          </div>
           <h3 className="font-semibold text-[#1a1a1a] text-base leading-snug">{contractor.name}</h3>
+          {contractor.isSpeaker && contractor.speakerTopic && (
+            <p className="text-xs text-purple-600 mt-0.5 leading-snug line-clamp-1">{contractor.speakerTopic}</p>
+          )}
+          {!contractor.isSpeaker && contractor.isFestivalPartner && (
+            <p className="text-xs text-amber-600 mt-0.5">Участник фестиваля</p>
+          )}
         </div>
       </div>
 
