@@ -349,7 +349,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
   const [deleteConfirm, setDeleteConfirm] = useState<Category | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  function toggleCat(id: string) {
+  function toggleCat(id: number | string) {
     setOpenCats((o) => ({ ...o, [id]: !o[id] }));
   }
 
