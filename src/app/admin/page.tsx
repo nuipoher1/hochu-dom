@@ -81,10 +81,22 @@ export default async function AdminDashboard() {
             {recentContractors.map((c) => (
               <li key={c.id} className="px-6 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center">
-                    <span className="text-brand text-xs font-semibold">
-                      {c.name.slice(0, 2).toUpperCase()}
-                    </span>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    c.isSpeaker
+                      ? "bg-purple-50 border border-purple-200"
+                      : c.isFestivalPartner
+                      ? "bg-amber-50 border border-amber-200"
+                      : "bg-surface border border-border"
+                  }`}>
+                    {c.isSpeaker ? (
+                      <Mic size={14} className="text-purple-600" />
+                    ) : c.isFestivalPartner ? (
+                      <span className="text-amber-500 text-sm leading-none">★</span>
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
+                        <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="#9ca3af" />
+                      </svg>
+                    )}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>

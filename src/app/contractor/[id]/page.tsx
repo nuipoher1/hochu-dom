@@ -35,8 +35,6 @@ export default async function ContractorPage({ params }: { params: { id: string 
 
   if (!contractor) notFound();
 
-  const initials = contractor.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-
   const contacts = [
     { icon: Phone, label: "Телефон", value: contractor.phone, href: `tel:${contractor.phone}` },
     { icon: Mail, label: "Email", value: contractor.email, href: `mailto:${contractor.email}` },
