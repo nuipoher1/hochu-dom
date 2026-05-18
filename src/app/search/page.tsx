@@ -11,7 +11,12 @@ import { Suspense } from "react";
 async function SearchResults({ q }: { q: string }) {
   if (!q.trim()) return null;
 
-  const qLower = q.toLowerCase();
+  const qLower = q.toLowerCase().trim();
+  // Русская морфология: ищем и по корню (обрезаем окончание)
+  // "печи" → "печ", "строители" → "строите", итд
+  const qRoot = qLower.length >= 5 ? qLower.slice(0, -2)
+              : qLower.length >= 4 ? qLower.slice(0, -1)
+              : qLower;
 
   const all = await prisma.contractor.findMany({
     orderBy: [{ isFestivalPartner: "desc" }, { isSpeaker: "desc" }, { name: "asc" }],
@@ -22,13 +27,20 @@ async function SearchResults({ q }: { q: string }) {
     },
   });
 
+  function matches(text: string) {
+    // Разбиваем на слова и проверяем начало каждого — «обеспечиваем» не матчит «печи»
+    const words = text.toLowerCase().split(/[\s.,!?;:"«»()–—\-\/\\+]+/);
+    return words.some((w) => w.startsWith(qLower) || w.startsWith(qRoot));
+  }
+
   const contractors = all.filter((c) => {
-    const inName = c.name.toLowerCase().includes(qLower);
-    const inDesc = c.description?.toLowerCase().includes(qLower) ?? false;
-    const inSub  = c.subcategories.some((s) =>
-      s.subcategory.name.toLowerCase().includes(qLower)
+    return (
+      matches(c.name) ||
+      matches(c.description ?? "") ||
+      c.subcategories.some((s) =>
+        matches(s.subcategory.name) || matches(s.subcategory.category.name)
+      )
     );
-    return inName || inDesc || inSub;
   });
 
   if (contractors.length === 0) {

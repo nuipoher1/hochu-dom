@@ -25,8 +25,9 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const {
     name, description, phone, email, website,
-    instagram, vk, telegram, address, geography,
+    instagram, vk, telegram, address, geography, logo,
     isFestivalPartner, isSpeaker, speakerTopic, speakerLectureUrl,
+    portfolioImages,
     subcategoryIds,
   } = body;
 
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
       telegram: telegram?.trim() || null,
       geography: Array.isArray(geography) && geography.length > 0 ? JSON.stringify(geography) : null,
       address: address?.trim() || null,
+      logo: logo?.trim() || null,
       isFestivalPartner: Boolean(isFestivalPartner),
       isSpeaker: Boolean(isSpeaker),
       speakerTopic: speakerTopic?.trim() || null,
@@ -58,6 +60,12 @@ export async function POST(req: NextRequest) {
       },
     },
   });
+
+  // portfolioImages через raw SQL (обходим устаревший Prisma-клиент)
+  if (Array.isArray(portfolioImages) && portfolioImages.length > 0) {
+    const portfolioJson = JSON.stringify(portfolioImages);
+    await prisma.$executeRaw`UPDATE "Contractor" SET "portfolioImages" = ${portfolioJson} WHERE id = ${contractor.id}`;
+  }
 
   return NextResponse.json(contractor, { status: 201 });
 }

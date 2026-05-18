@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
 
   const stats = [
     { label: "Партнёров", value: contractors, icon: Users, color: "text-brand", bg: "bg-green-50" },
-    { label: "Категорий", value: categories, icon: FolderTree, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Этапов", value: categories, icon: FolderTree, color: "text-blue-600", bg: "bg-blue-50" },
     { label: "Участников фестиваля", value: festivalPartners, icon: Star, color: "text-amber-600", bg: "bg-amber-50" },
     { label: "Спикеров", value: speakers, icon: Mic, color: "text-purple-600", bg: "bg-purple-50" },
   ];
@@ -101,7 +101,7 @@ export default async function AdminDashboard() {
                   <div>
                     <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
                     <p className="text-xs text-muted">
-                      {c.subcategories[0]?.subcategory.name || "Без категории"}
+                      {c.subcategories[0]?.subcategory.name || "Без услуги"}
                     </p>
                   </div>
                 </div>

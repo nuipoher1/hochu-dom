@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Pencil, Mic } from "lucide-react";
+import { Plus, Pencil, Mic, Upload } from "lucide-react";
 import DeleteContractorButton from "@/components/DeleteContractorButton";
 
 export default async function ContractorsPage({ searchParams }: { searchParams: { q?: string } }) {
@@ -20,12 +20,20 @@ export default async function ContractorsPage({ searchParams }: { searchParams: 
           <h1 className="text-2xl font-semibold text-[#1a1a1a]">Партнёры</h1>
           <p className="text-sm text-muted mt-0.5">{contractors.length} записей</p>
         </div>
-        <Link
-          href="/admin/contractors/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-medium rounded-xl hover:bg-brand-dark transition-colors"
-        >
-          <Plus size={16} /> Добавить
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/import"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl border border-border hover:border-brand hover:text-brand transition-colors"
+          >
+            <Upload size={15} /> Импорт из Excel
+          </Link>
+          <Link
+            href="/admin/contractors/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-medium rounded-xl hover:bg-brand-dark transition-colors"
+          >
+            <Plus size={16} /> Добавить
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-border mb-4">
@@ -64,22 +72,38 @@ export default async function ContractorsPage({ searchParams }: { searchParams: 
                 <tr key={c.id} className="hover:bg-surface/50 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      {c.isSpeaker ? (
-                        <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center flex-shrink-0">
-                          <Mic size={14} className="text-purple-600" />
+                      {/* Аватар: лого > спикер > партнёр > домик */}
+                      <div className="w-8 h-8 rounded-lg border border-border flex items-center justify-center flex-shrink-0 overflow-hidden bg-white">
+                        {c.logo ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={c.logo} alt={c.name} className="w-full h-full object-contain p-0.5" />
+                        ) : c.isSpeaker ? (
+                          <div className="w-full h-full bg-purple-50 flex items-center justify-center">
+                            <Mic size={14} className="text-purple-600" />
+                          </div>
+                        ) : c.isFestivalPartner ? (
+                          <div className="w-full h-full bg-amber-50 flex items-center justify-center">
+                            <span className="text-amber-500 text-sm leading-none">★</span>
+                          </div>
+                        ) : (
+                          <div className="w-full h-full bg-surface flex items-center justify-center">
+                            <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
+                              <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="#9ca3af" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
+                          {c.isFestivalPartner && (
+                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200 whitespace-nowrap">Партнёр фестиваля</span>
+                          )}
+                          {c.isSpeaker && (
+                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 border border-purple-200 whitespace-nowrap">Спикер фестиваля</span>
+                          )}
                         </div>
-                      ) : c.isFestivalPartner ? (
-                        <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
-                          <span className="text-amber-500 text-sm leading-none">★</span>
-                        </div>
-                      ) : (
-                        <div className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center flex-shrink-0">
-                          <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-                            <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="#9ca3af" />
-                          </svg>
-                        </div>
-                      )}
-                      <p className="text-sm font-medium text-[#1a1a1a]">{c.name}</p>
+                      </div>
                     </div>
                   </td>
                   <td className="px-5 py-3 hidden md:table-cell">

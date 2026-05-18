@@ -31,9 +31,9 @@ export default function Header() {
           <Link href="/pdf" className="text-sm text-muted hover:text-brand px-3 py-2 rounded-lg hover:bg-green-50 transition-colors">
             Каталог подрядчиков
           </Link>
-          <Link href="#about" className="text-sm text-muted hover:text-brand px-3 py-2 rounded-lg hover:bg-green-50 transition-colors">
+          <a href="https://vk.ru/hochudom_fest" target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-brand px-3 py-2 rounded-lg hover:bg-green-50 transition-colors">
             О фестивале
-          </Link>
+          </a>
         </nav>
 
         {/* Right: PDF button */}
@@ -60,7 +60,7 @@ export default function Header() {
         <div className="md:hidden bg-white border-t border-border px-4 py-4 flex flex-col gap-3">
           <Link href="/" className="text-sm text-muted py-1" onClick={() => setMenuOpen(false)}>Главная</Link>
           <Link href="/#stages" className="text-sm text-muted py-1" onClick={() => setMenuOpen(false)}>Этапы строительства</Link>
-          <Link href="#about" className="text-sm text-muted py-1" onClick={() => setMenuOpen(false)}>О фестивале</Link>
+          <a href="https://vk.ru/hochudom_fest" target="_blank" rel="noopener noreferrer" className="text-sm text-muted py-1" onClick={() => setMenuOpen(false)}>О фестивале</a>
           <Link href="/pdf" className="text-sm font-medium text-brand py-1" onClick={() => setMenuOpen(false)}>Скачать каталог PDF</Link>
         </div>
       )}

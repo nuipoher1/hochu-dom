@@ -130,7 +130,7 @@ function CategoryModal({
       <div className="relative bg-white rounded-2xl border border-border shadow-xl w-full max-w-2xl my-8">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h3 className="font-semibold text-[#1a1a1a]">{isNew ? "Новая категория" : `Редактировать: ${cat!.name}`}</h3>
+          <h3 className="font-semibold text-[#1a1a1a]">{isNew ? "Новый этап" : `Редактировать этап: ${cat!.name}`}</h3>
           <button onClick={onClose} className="text-muted hover:text-[#1a1a1a] transition-colors"><X size={18} /></button>
         </div>
 
@@ -310,7 +310,7 @@ function AddSubcategoryForm({ categoryId, onAdded }: { categoryId: string; onAdd
   if (!open) {
     return (
       <button onClick={() => setOpen(true)} className="text-xs text-brand hover:underline flex items-center gap-1 mt-2">
-        <Plus size={11} /> Добавить подкатегорию
+        <Plus size={11} /> Добавить услугу
       </button>
     );
   }
@@ -322,7 +322,7 @@ function AddSubcategoryForm({ categoryId, onAdded }: { categoryId: string; onAdd
           value={name}
           onChange={(e) => { setName(e.target.value); setError(""); }}
           onKeyDown={(e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { setOpen(false); setError(""); } }}
-          placeholder="Название подкатегории"
+          placeholder="Название услуги"
           className="flex-1 px-2.5 py-1.5 rounded-lg border border-brand bg-white text-sm focus:outline-none"
           autoFocus
         />
@@ -374,8 +374,8 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-[#1a1a1a]">Категории</h1>
-          <p className="text-sm text-muted mt-0.5">{categories.length} категорий · 9 этапов пути</p>
+          <h1 className="text-2xl font-semibold text-[#1a1a1a]">Этапы</h1>
+          <p className="text-sm text-muted mt-0.5">{categories.length} этапов</p>
         </div>
         <button
           onClick={() => setEditModal("new")}
@@ -400,7 +400,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-[#1a1a1a]">{cat.name}</p>
                     <p className="text-xs text-muted mt-0.5">
-                      {cat.subcategories.length} подкатег. · {cat.contractorCount} партнёров
+                      {cat.subcategories.length} услуг · {cat.contractorCount} партнёров
                     </p>
                   </div>
                   {isOpen
@@ -432,7 +432,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Subcategories */}
                     <div>
-                      <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Подкатегории</p>
+                      <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Услуги</p>
                       <div className="divide-y divide-border">
                         {cat.subcategories.map((sub) => (
                           <SubcategoryRow key={sub.id} sub={sub} categoryId={cat.id} onRefresh={refresh} />
@@ -501,9 +501,9 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                 <AlertTriangle size={20} className="text-red-500" />
               </div>
               <div>
-                <h3 className="font-semibold text-[#1a1a1a]">Удалить категорию?</h3>
+                <h3 className="font-semibold text-[#1a1a1a]">Удалить этап?</h3>
                 <p className="text-sm text-muted mt-1">
-                  <span className="font-medium text-[#1a1a1a]">{deleteConfirm.name}</span> и все её подкатегории будут удалены.
+                  <span className="font-medium text-[#1a1a1a]">{deleteConfirm.name}</span> и все его услуги будут удалены.
                   {deleteConfirm._count.contractors > 0 && (
                     <span className="text-red-600"> {deleteConfirm._count.contractors} партнёров потеряют эту категорию.</span>
                   )}

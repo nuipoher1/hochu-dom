@@ -7,7 +7,7 @@ import { LayoutDashboard, Users, FolderTree, LogOut, ExternalLink } from "lucide
 const nav = [
   { href: "/admin", label: "Дашборд", icon: LayoutDashboard, exact: true },
   { href: "/admin/contractors", label: "Партнёры", icon: Users },
-  { href: "/admin/categories", label: "Категории", icon: FolderTree },
+  { href: "/admin/categories", label: "Этапы и услуги", icon: FolderTree },
 ];
 
 export default function AdminSidebar() {

@@ -30,8 +30,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
   const {
     name, description, phone, email, website,
-    instagram, vk, telegram, address, geography,
+    instagram, vk, telegram, address, geography, logo,
     isFestivalPartner, isSpeaker, speakerTopic, speakerLectureUrl,
+    portfolioImages,
     subcategoryIds,
   } = body;
 
@@ -71,12 +72,20 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         geography: Array.isArray(geography) && geography.length > 0
           ? JSON.stringify(geography)
           : null,
+        logo: logo?.trim() || null,
         isFestivalPartner: Boolean(isFestivalPartner),
         isSpeaker: Boolean(isSpeaker),
         speakerTopic: speakerTopic?.trim() || null,
         speakerLectureUrl: speakerLectureUrl?.trim() || null,
       },
     });
+
+    // portfolioImages через raw SQL (обходим устаревший Prisma-клиент)
+    const portfolioJson: string | null =
+      Array.isArray(portfolioImages) && portfolioImages.length > 0
+        ? JSON.stringify(portfolioImages)
+        : null;
+    await prisma.$executeRaw`UPDATE "Contractor" SET "portfolioImages" = ${portfolioJson} WHERE id = ${id}`;
 
     // Step 3: create new subcategory links
     if (parsedSubIds.length > 0) {

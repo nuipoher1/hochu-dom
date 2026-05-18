@@ -31,11 +31,17 @@ export default async function EditContractorPage({ params }: { params: { id: str
     vk: contractor.vk || "",
     telegram: contractor.telegram || "",
     address: (contractor as any).address || "",
+    logo: contractor.logo || "",
     geography: contractor.geography || "",
     isFestivalPartner: contractor.isFestivalPartner,
     isSpeaker: contractor.isSpeaker,
     speakerTopic: contractor.speakerTopic || "",
     speakerLectureUrl: contractor.speakerLectureUrl || "",
+    portfolioImages: (() => {
+      const raw = (contractor as { portfolioImages?: string | null }).portfolioImages;
+      if (!raw) return [] as string[];
+      try { return JSON.parse(raw) as string[]; } catch { return [] as string[]; }
+    })(),
     subcategoryIds: contractor.subcategories.map((s) => String(s.subcategoryId)),
   };
 

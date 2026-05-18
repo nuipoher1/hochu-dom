@@ -4,35 +4,34 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
-import { Suspense } from "react";
 import {
-  ArrowRight, MapPin, Banknote, PenTool, HardHat, Zap,
-  Paintbrush, Sofa, Trees, PartyPopper,
-  Users, Star, Mic, Layers,
+  ArrowRight, MapPin, Wallet, PenLine, HardHat, Plug,
+  LayoutGrid, Sofa, Trees, Sparkles,
+  Users, Shield, BookOpen, Home, ChevronRight,
 } from "lucide-react";
 
-const categoryDesc: Record<string, string> = {
-  zemlya:        "Участок, геология, межевание, коммуникации",
-  finansy:       "Ипотека, бюджет, страхование, субсидии",
-  proekt:        "Архитектура, дизайн, разрешения, смета",
-  strojka:       "Фундамент, коробка, кровля, материалы",
-  inzheneriya:   "Электрика, вода, отопление, вентиляция",
-  remont:        "Отделка, двери, окна, полы, потолки",
-  mebel:         "Кухня, шкафы, мягкая мебель, декор",
-  blagoustrojstvo: "Ландшафт, забор, баня, освещение",
-  dosug:         "Новоселье, фото, кейтеринг, праздник",
+const stageIconMap: Record<string, React.ReactNode> = {
+  zemlya:          <MapPin size={22} />,
+  finansy:         <Wallet size={22} />,
+  proekt:          <PenLine size={22} />,
+  strojka:         <HardHat size={22} />,
+  inzheneriya:     <Plug size={22} />,
+  remont:          <LayoutGrid size={22} />,
+  mebel:           <Sofa size={22} />,
+  blagoustrojstvo: <Trees size={22} />,
+  dosug:           <Sparkles size={22} />,
 };
 
-const iconMap: Record<string, React.ReactNode> = {
-  MapPin:      <MapPin size={20} />,
-  Banknote:    <Banknote size={20} />,
-  PenTool:     <PenTool size={20} />,
-  HardHat:     <HardHat size={20} />,
-  Zap:         <Zap size={20} />,
-  Paintbrush:  <Paintbrush size={20} />,
-  Sofa:        <Sofa size={20} />,
-  Trees:       <Trees size={20} />,
-  PartyPopper: <PartyPopper size={20} />,
+const categoryDesc: Record<string, string> = {
+  zemlya:          "Участок, геология, межевание, коммуникации",
+  finansy:         "Ипотека, бюджет, страхование, субсидии",
+  proekt:          "Архитектура, дизайн, разрешения, смета",
+  strojka:         "Фундамент, коробка, кровля, материалы",
+  inzheneriya:     "Электрика, вода, отопление, вентиляция",
+  remont:          "Отделка, двери, окна, полы, потолки",
+  mebel:           "Кухня, шкафы, мягкая мебель, декор",
+  blagoustrojstvo: "Ландшафт, забор, баня, освещение",
+  dosug:           "Новоселье, фото, кейтеринг, праздник",
 };
 
 export default async function HomePage() {
@@ -41,204 +40,163 @@ export default async function HomePage() {
     include: { subcategories: true },
   });
 
-  const [totalContractors, festivalPartners, speakers] = await Promise.all([
+  const [totalContractors, totalTips] = await Promise.all([
     prisma.contractor.count(),
-    prisma.contractor.count({ where: { isFestivalPartner: true } }),
-    prisma.contractor.count({ where: { isSpeaker: true } }),
+    prisma.tip.count(),
   ]);
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen" style={{ background: "url('/stages-bg.png') center/cover no-repeat #F4EDE0" }}>
       <Header />
 
       {/* ─── HERO ─── */}
-      <section className="bg-white border-b border-border overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col lg:flex-row lg:items-stretch min-h-[500px]">
-
-            {/* LEFT: text */}
-            <div className="flex-1 py-14 lg:py-20 lg:pr-14 flex flex-col justify-center">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-brand text-xs font-semibold rounded-full border border-green-200 mb-6 self-start">
-                <span className="w-1.5 h-1.5 bg-brand rounded-full" />
-                Фестиваль «Хочу дом»
-              </span>
-
-              <h1 className="text-4xl md:text-5xl font-bold text-[#1a1a1a] leading-[1.15] mb-5">
-                Партнёрский<br />каталог
-              </h1>
-
-              <p className="text-base text-muted leading-relaxed mb-8 max-w-md">
-                Пошаговый навигатор по строительству дома — от выбора участка до новоселья.
-                Проверенные подрядчики, полезные советы и актуальные решения на каждом этапе.
-              </p>
-
-              <div className="flex flex-wrap gap-3 mb-10">
-                <a
-                  href="#stages"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand text-white font-semibold rounded-xl hover:bg-brand-dark transition-colors text-sm"
-                >
-                  Выбрать этап <ArrowRight size={15} />
-                </a>
-              </div>
-
-              {/* 3 features */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { icon: <Layers size={15} />, title: "Понятный путь", desc: "9 этапов от земли до новоселья" },
-                  { icon: <Users size={15} />, title: "Проверенные подрядчики", desc: "Участники фестиваля и эксперты отрасли" },
-                  { icon: <Star size={15} />, title: "Актуальные советы", desc: "Избегайте ошибок и экономьте время" },
-                ].map((f) => (
-                  <div key={f.title} className="flex gap-2.5 p-3 rounded-xl bg-surface border border-border">
-                    <div className="w-7 h-7 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center text-brand flex-shrink-0 mt-0.5">
-                      {f.icon}
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-[#1a1a1a]">{f.title}</p>
-                      <p className="text-[11px] text-muted leading-snug mt-0.5">{f.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* RIGHT: house photo */}
-            <div className="hidden lg:flex lg:w-[480px] items-center py-10 pl-4">
-              <div className="relative w-full h-[420px] rounded-2xl overflow-hidden shadow-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/hero-house.webp"
-                  alt="Современный загородный дом"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
+      <section className="relative overflow-hidden" style={{ minHeight: "660px" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/hero-cover.png"
+          alt="Партнёрский каталог"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.38) 55%, #F4EDE0 100%)",
+          }}
+        />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 flex flex-col justify-center pb-24 pt-40">
+          <h1 className="text-5xl md:text-6xl font-bold text-white leading-[1.1] mb-3">
+            Партнёрский<br />каталог
+          </h1>
+<p className="text-base leading-relaxed mb-8 max-w-md" style={{ color: "rgba(255,255,255,0.82)" }}>
+            Пошаговый навигатор по строительству дома — от выбора участка до новоселья.
+            Проверенные подрядчики, полезные советы и актуальные решения на каждом этапе.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="#stages"
+              className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90"
+              style={{ backgroundColor: "#2d6a4f", color: "#fff" }}
+            >
+              Выбрать этап <ArrowRight size={16} />
+            </a>
+            <a
+              href="https://forms.yandex.ru/u/6a0a26b684227c677c4ed904"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-2xl transition-opacity hover:opacity-90"
+              style={{ border: "2px solid rgba(255,255,255,0.55)", color: "#fff" }}
+            >
+              Стать партнёром
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
-      <section className="bg-white border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:divide-x md:divide-border">
+      {/* ─── COUNTERS ─── */}
+      <section style={{ backgroundColor: "rgba(235,224,204,0.90)", borderTop: "1px solid #DED4C0", borderBottom: "1px solid #DED4C0" }} className="py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
             {[
-              { icon: <Users size={17} />, value: totalContractors || 0, label: "Подрядчиков в каталоге" },
-              { icon: <Star size={17} />,  value: festivalPartners || 0,  label: "Участников фестиваля" },
-              { icon: <Mic size={17} />,   value: speakers || 0,          label: "Спикеров выступлений" },
-              { icon: <Layers size={17} />, value: 9,                     label: "Этапов строительства" },
+              { icon: <Users size={22} />, value: `${totalContractors}`, label: "проверенных компаний" },
+              { icon: <Home size={22} />, value: "9", label: "этапов от земли до новоселья" },
+              { icon: <Shield size={22} />, value: "200+", label: "семей нашли свой путь к дому" },
             ].map((s, i) => (
-              <div key={i} className="flex items-center gap-3 md:pl-6 md:first:pl-0">
-                <div className="w-9 h-9 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center text-brand flex-shrink-0">
-                  {s.icon}
+              <div key={i} className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span style={{ color: "#2d6a4f" }}>{s.icon}</span>
+                  <p className="text-3xl font-bold text-[#1a1a1a]">{s.value}</p>
                 </div>
-                <div>
-                  <p className="text-xl font-bold text-[#1a1a1a] leading-none">{s.value}</p>
-                  <p className="text-[11px] text-muted mt-1 leading-snug">{s.label}</p>
-                </div>
+                <p className="text-sm" style={{ color: "#7a6f5e" }}>{s.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── SEARCH ─── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2">
-        <div className="bg-white rounded-2xl border border-border px-6 py-5">
-          <p className="text-sm font-semibold text-[#1a1a1a] mb-3">Найти подрядчика по виду работ</p>
-          <Suspense>
+      {/* ─── ПОИСК ─── */}
+      <section className="pt-10 pb-4">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div
+            className="rounded-2xl p-6"
+            style={{ backgroundColor: "rgba(255,255,255,0.82)", border: "1px solid rgba(222,212,192,0.8)" }}
+          >
+            <h2 className="font-bold text-[#1a1a1a] mb-4">Найти подрядчика по виду работ</h2>
             <SearchBar placeholder="Например: строители, пластиковые окна, дизайн интерьера, кровля..." />
-          </Suspense>
-          <div className="flex flex-wrap gap-2 mt-3">
-            {["Строители", "Архитектор", "Дизайн интерьера", "Пластиковые окна", "Кровля", "Фундамент", "Ландшафтный дизайн"].map((hint) => (
-              <a
-                key={hint}
-                href={`/search?q=${encodeURIComponent(hint)}`}
-                className="text-xs px-3 py-1.5 rounded-full border border-border text-muted hover:border-brand hover:text-brand transition-colors"
-              >
-                {hint}
-              </a>
-            ))}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {["Строители", "Архитектор", "Дизайн интерьера", "Пластиковые окна", "Кровля", "Фундамент", "Ландшафтный дизайн"].map((tag) => (
+                <a
+                  key={tag}
+                  href={`/search?q=${encodeURIComponent(tag)}`}
+                  className="text-xs px-3 py-1.5 rounded-full border transition-colors hover:border-brand hover:text-brand"
+                  style={{ backgroundColor: "rgba(255,255,255,0.7)", borderColor: "#DED4C0", color: "#7a6f5e" }}
+                >
+                  {tag}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── STAGES ─── */}
-      <section id="stages" className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a1a]">Этапы строительства</h2>
-            <p className="text-muted mt-1 text-sm">9 этапов от земли до новоселья</p>
-          </div>
-          {totalContractors > 0 && (
-            <span className="text-sm text-muted hidden md:block">
-              {totalContractors} {totalContractors === 1 ? "партнёр" : "партнёров"} в каталоге
-            </span>
-          )}
-        </div>
+      <section id="stages" className="pt-6 pb-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <h2 className="text-3xl font-bold text-[#1a1a1a] mb-1">Этапы строительства</h2>
+          <p className="text-sm mb-10" style={{ color: "#7a6f5e" }}>9 этапов от земли до новоселья</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/category/${cat.slug}`}
-              className="group bg-white rounded-2xl border border-border p-5 hover:border-green-300 hover:shadow-md transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center text-brand">
-                    {cat.icon && iconMap[cat.icon]
-                      ? iconMap[cat.icon]
-                      : <span className="font-bold text-sm">{String(cat.order).padStart(2, "0")}</span>
-                    }
+          {/* Timeline */}
+          <div className="relative">
+            {/* Вертикальная пунктирная линия */}
+            <div
+              className="absolute top-5 bottom-5"
+              style={{ left: "21px", borderLeft: "2px dashed #C8BAA0", width: 0 }}
+            />
+
+            <div className="flex flex-col gap-3">
+              {categories.map((cat, idx) => (
+                <div key={cat.id} className="flex items-center gap-4">
+                  {/* Кружок с номером — снаружи карточки */}
+                  <div
+                    className="relative z-10 flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: "#F4EDE0",
+                      border: "2px solid #C8BAA0",
+                      color: "#2d6a4f",
+                    }}
+                  >
+                    {String(cat.order || idx + 1).padStart(2, "0")}
                   </div>
-                  <span className="text-xs font-medium text-muted tabular-nums">
-                    {String(cat.order).padStart(2, "0")}
-                  </span>
-                </div>
-                <ArrowRight size={15} className="text-muted group-hover:text-brand group-hover:translate-x-0.5 transition-all mt-0.5" />
-              </div>
-              <h3 className="font-semibold text-[#1a1a1a] text-base mb-1">{cat.name}</h3>
-              {categoryDesc[cat.slug] && (
-                <p className="text-xs text-muted mb-1.5">{categoryDesc[cat.slug]}</p>
-              )}
-              <p className="text-xs text-muted/60">
-                {cat.subcategories.length}&nbsp;
-                {cat.subcategories.length === 1
-                  ? "услуга"
-                  : cat.subcategories.length < 5
-                  ? "услуги"
-                  : "услуг"}
-              </p>
-            </Link>
-          ))}
-        </div>
-      </section>
 
-      {/* ─── ABOUT ─── */}
-      <section id="about" className="bg-white border-t border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
-          <div className="flex flex-col md:flex-row gap-12 items-start">
-            <div className="md:w-72 flex-shrink-0">
-              <h2 className="text-2xl font-bold text-[#1a1a1a] mb-4">О фестивале</h2>
-              <p className="text-sm text-muted leading-relaxed mb-4">
-                «Хочу дом» — фестиваль для тех, кто строит или мечтает о своём доме.
-                Мы собрали в одном месте экспертов, подрядчиков и полезные знания,
-                чтобы ваш путь к дому был простым и комфортным.
-              </p>
-              <a href="#about" className="inline-flex items-center gap-1.5 text-sm text-brand font-medium hover:underline">
-                Подробнее <ArrowRight size={14} />
-              </a>
-            </div>
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                { num: "01", title: "Выберите этап", desc: "Найдите шаг, на котором вы сейчас находитесь" },
-                { num: "02", title: "Изучите советы", desc: "Что важно учесть и каких ошибок избежать" },
-                { num: "03", title: "Найдите партнёра", desc: "Выберите специалиста и свяжитесь напрямую" },
-              ].map((step) => (
-                <div key={step.num} className="flex flex-col gap-2 p-4 rounded-2xl bg-surface border border-border">
-                  <span className="text-3xl font-bold text-green-100 leading-none">{step.num}</span>
-                  <h4 className="font-semibold text-[#1a1a1a] text-sm">{step.title}</h4>
-                  <p className="text-xs text-muted leading-snug">{step.desc}</p>
+                  {/* Карточка */}
+                  <Link
+                    href={`/category/${cat.slug}`}
+                    className="group flex-1 flex items-center gap-4 rounded-2xl px-5 py-4 transition-all hover:shadow-md"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.82)",
+                      border: "1px solid rgba(222, 212, 192, 0.8)",
+                    }}
+                  >
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: "#E8F5EE", border: "1px solid #b3e6c9", color: "#2d6a4f" }}
+                    >
+                      {stageIconMap[cat.slug] ?? <Home size={24} />}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[#1a1a1a]">{cat.name}</p>
+                      {categoryDesc[cat.slug] && (
+                        <p className="text-xs mt-0.5" style={{ color: "#7a6f5e" }}>{categoryDesc[cat.slug]}</p>
+                      )}
+                    </div>
+
+                    <ChevronRight
+                      size={18}
+                      className="flex-shrink-0 group-hover:translate-x-0.5 transition-transform"
+                      style={{ color: "#2d6a4f" }}
+                    />
+                  </Link>
                 </div>
               ))}
             </div>
@@ -247,17 +205,17 @@ export default async function HomePage() {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="border-t border-border bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer style={{ backgroundColor: "rgba(235,224,204,0.92)", borderTop: "1px solid #DED4C0" }}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brand rounded-md flex items-center justify-center">
               <svg width="12" height="12" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2L2 8v8h5v-5h4v5h5V8L9 2Z" fill="white" />
               </svg>
             </div>
-            <span className="text-sm text-muted">© 2026 Фестиваль «Хочу дом»</span>
+            <span className="text-sm" style={{ color: "#7a6f5e" }}>© 2026 Фестиваль «Хочу дом»</span>
           </div>
-          <Link href="/admin/login" className="text-xs text-muted hover:text-brand transition-colors">
+          <Link href="/admin/login" className="text-xs hover:text-brand transition-colors" style={{ color: "#7a6f5e" }}>
             Вход для администратора
           </Link>
         </div>

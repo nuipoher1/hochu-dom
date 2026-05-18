@@ -65,6 +65,7 @@ model Contractor {
   isSpeaker         Boolean                 @default(false)
   speakerTopic      String?
   speakerLectureUrl String?
+  portfolioImages   String?
   subcategories     ContractorSubcategory[]
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
